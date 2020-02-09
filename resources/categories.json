@@ -1,0 +1,137 @@
+[
+    {
+        "id": 1,
+        "name": "Filme SD",
+        "type": "video"
+    },
+    {
+        "id": 2,
+        "name": "Filme DVD",
+        "type": "video"
+    },
+    {
+        "id": 3,
+        "name": "Filme DVD-RO",
+        "type": "video"
+    },
+    {
+        "id": 4,
+        "name": "Filme HD",
+        "type": "video"
+    },
+    {
+        "id": 5,
+        "name": "FLAC",
+        "type": "audio"
+    },
+    {
+        "id": 6,
+        "name": "Filme 4K",
+        "type": "video"
+    },
+    {
+        "id": 7,
+        "name": "XXX",
+        "type": "xxx"
+    },
+    {
+        "id": 8,
+        "name": "Programe",
+        "type": "software"
+    },
+    {
+        "id": 9,
+        "name": "Jocuri PC",
+        "type": "software"
+    },
+    {
+        "id": 10,
+        "name": "Jocuri Console",
+        "type": "software"
+    },
+    {
+        "id": 11,
+        "name": "Audio",
+        "type": "audio"
+    },
+    {
+        "id": 12,
+        "name": "Videoclip",
+        "type": "video"
+    },
+    {
+        "id": 13,
+        "name": "Sport",
+        "type": "video"
+    },
+    {
+        "id": 14,
+        "name": "TV",
+        "type": "video"
+    },
+    {
+        "id": 15,
+        "name": "Desene",
+        "type": "video"
+    },
+    {
+        "id": 16,
+        "name": "Docs",
+        "type": "docs"
+    },
+    {
+        "id": 17,
+        "name": "Linux",
+        "type": "software"
+    },
+    {
+        "id": 18,
+        "name": "Diverse",
+        "type": "misc"
+    },
+    {
+        "id": 19,
+        "name": "Filme HD-RO",
+        "type": "video"
+    },
+    {
+        "id": 20,
+        "name": "Filme Blu-Ray",
+        "type": "video"
+    },
+    {
+        "id": 21,
+        "name": "Seriale HD",
+        "type": "video"
+    },
+    {
+        "id": 22,
+        "name": "Mobile",
+        "type": "software"
+    },
+    {
+        "id": 23,
+        "name": "Seriale SD",
+        "type": "video"
+    },
+    {
+        "id": 24,
+        "name": "Anime",
+        "type": "video"
+    },
+    {
+        "id": 25,
+        "name": "Filme 3D",
+        "type": "video"
+    },
+    {
+        "id": 26,
+        "name": "Filme 4K Blu-Ray",
+        "type": "video"
+    },
+    {
+        "id": 27,
+        "name": "Seriale 4K",
+        "type": "video"
+    }
+]

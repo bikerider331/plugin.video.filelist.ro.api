@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+	<setting label="User and passphrase" type="lsep"/>
+	<setting id="filelist.user" type="text" label="user" default="" />
+	<setting id="filelist.passphrase" type="text" label="passphrase" default="" />
+
+	<setting label="Movie posters and info sources" type="lsep" />
+	<setting id="tmdb_api_key" type="text" label="TMDB API Key" default="" />
+
+	<setting label="Torrent actions" type="lsep"/>
+	<setting id="torrentAction" type="enum" values="Watch with Elementum|Save to folder" label="Select action for torrent" default="0"/>
+	<setting id="saveTorrentFolder" type="folder"  source="auto" option="writeable" label="Save torrents folder" default=""/>
+
+	<setting label="Categories to show" type="lsep"/>
+	<setting id="show_video" type="bool" label="Video" default="true" />
+	<setting id="show_audio" type="bool" label="Audio" default="false" />
+	<setting id="show_software" type="bool" label="Software" default="false" />
+	<setting id="show_docs" type="bool" label="Docs" default="false" />
+	<setting id="show_misc" type="bool" label="Misc" default="false" />
+	<setting id="show_xxx" type="bool" label="XXX" default="false" />
+
+</settings>
