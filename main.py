@@ -50,8 +50,9 @@ class Indexer:
         self.tmdb_api_key=self.addon.getSetting('tmdb_api_key')
         self.metaDataAvailable = False
         self.pageSize = 10
+        if not self.tmdb_api_key:
+            self.tmdb_api_key = base64.urlsafe_b64decode('NjI4YTFhNDAxZThiZDg1ZDFlZTc2OTA4MWUwZjFmYzE=')
         if self.tmdb_api_key:
-            print("tmdb_api_key: "+self.tmdb_api_key)
             from movieinfo import MovieInfoProvider
             self.movieInfoProvider = MovieInfoProvider(self.tmdb_api_key)
             self.metaDataAvailable = True
