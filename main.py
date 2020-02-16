@@ -166,7 +166,7 @@ class Indexer:
         self.cache.set(CACHE_LABEL_TORRENTS_BY_ID,torrentsById, expiration=datetime.timedelta(hours=CACHE_EXPIRATION_HOURS))
         self.cache.set(CACHE_LABEL_TORRENTS,torrents, expiration=datetime.timedelta(hours=CACHE_EXPIRATION_HOURS))
 
-    def show_torrents(self, categoryId, torrents, startIndex): 
+    def show_torrents(self, categoryId, torrents, startIndex, paged = True): 
         startIndex = int(startIndex)
         addNextPageItem = True
         endIndex = startIndex + self.pageSize
@@ -174,6 +174,10 @@ class Indexer:
         if len(torrents) < endIndex:
             endIndex = len(torrents)
             addNextPageItem = False
+
+        if not paged:
+            addNextPageItem = False
+            endIndex = len(torrents) 
 
         totalItems = 1 + endIndex - startIndex
         for index in range(startIndex, endIndex):
@@ -283,7 +287,7 @@ class Indexer:
                     # for this type of content.
                     xbmcplugin.setContent(self._handle, 'videos')
                     # Get the list of videos in the category.
-                    self.show_torrents(torrents)
+                    self.show_torrents(categoryId, torrents, startIndex = 0, paged=False)
             else:
                 dialog = xbmcgui.Dialog()
                 ok = dialog.ok('Error', 'There was an error.')
