@@ -35,7 +35,7 @@ class FLTorrentProvider:
         return data    
 
     def makeUrl(self, action):
-        url = "https://filelist.ro/api.php?username="+self.username+"&passkey="+self.passkey+"&action="+action
+        url = "https://filelist.io/api.php?username="+self.username+"&passkey="+self.passkey+"&action="+action
         return url
 
     def getData(self, url):
