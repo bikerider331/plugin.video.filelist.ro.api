@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon id="plugin.video.filelist.ro.api"
-version="1.0.3"
+version="1.0.4"
 name="FileList.ro Video Plugin "
 provider-name="Dark1">
 <requires>
@@ -18,7 +18,7 @@ provider-name="Dark1">
     <icon>icon.png</icon>
     <fanart>fanart.jpg</fanart>
   </assets>
-  <news>Updated with latest artwork metadata</news>
+  <news>Fixed requests not working</news>
   <language>en</language>
 	<platform>all</platform>
 </extension>
