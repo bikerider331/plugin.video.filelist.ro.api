@@ -1,8 +1,12 @@
 import urllib
+from urllib import FancyURLopener
 import xbmc
 import json
 import xbmcvfs
 import os
+
+class FireFoxAgent(FancyURLopener):
+    version = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11'
 
 class FLTorrentProvider:
     
@@ -18,6 +22,8 @@ class FLTorrentProvider:
         url = url +"&category="+str(categoryId)
 
         data = self.getData(url) 
+
+        
 
         return data
 
@@ -39,8 +45,15 @@ class FLTorrentProvider:
         return url
 
     def getData(self, url):
-        response = urllib.urlopen(url)
-        data = json.loads(response.read())
+        xbmc.log("getData using url: "+url)
+        data = []
+        try:
+            agent = FireFoxAgent() 
+            response = agent.open(url)
+            receivedData = response.read()
+            data = json.loads(receivedData)
+        except Exception as e:
+            xbmc.log("Error decoding json response from FL. Exception: "+str(e))
         return data
 
     def downloadTorrent(self, torrent, saveDir):
@@ -52,7 +65,9 @@ class FLTorrentProvider:
 
         xbmc.log("Download link: "+url)
 
-        response = urllib.urlopen(url)
+        agent = FireFoxAgent() 
+
+        response = agent.open(url)
         data = response.read()
         response.close()
 
