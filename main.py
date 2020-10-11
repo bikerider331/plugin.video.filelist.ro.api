@@ -155,19 +155,19 @@ class Indexer:
         else:
             torrents = self.cache.get(CACHE_LABEL_TORRENTS)
 
-        self.cacheTorrents(torrents)
-
         self.show_torrents(categoryId, torrents, startIndex)
         
     def cacheTorrents(self, torrents):
-        torrentsById = {}
-        for torrent in torrents:
-            id = torrent['id']
-            torrentsById[id] = torrent
-        self.cache.set(CACHE_LABEL_TORRENTS_BY_ID,torrentsById, expiration=datetime.timedelta(hours=CACHE_EXPIRATION_HOURS))
-        self.cache.set(CACHE_LABEL_TORRENTS,torrents, expiration=datetime.timedelta(hours=CACHE_EXPIRATION_HOURS))
+        if (torrents != None and len(torrents) > 0):
+            torrentsById = {}
+            for torrent in torrents:
+                id = torrent['id']
+                torrentsById[id] = torrent
+            self.cache.set(CACHE_LABEL_TORRENTS_BY_ID,torrentsById, expiration=datetime.timedelta(hours=CACHE_EXPIRATION_HOURS))
+            self.cache.set(CACHE_LABEL_TORRENTS,torrents, expiration=datetime.timedelta(hours=CACHE_EXPIRATION_HOURS))
 
     def show_torrents(self, categoryId, torrents, startIndex, paged = True): 
+        self.cacheTorrents(torrents)
         startIndex = int(startIndex)
         addNextPageItem = True
         endIndex = startIndex + self.pageSize
