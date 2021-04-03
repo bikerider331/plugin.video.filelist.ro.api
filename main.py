@@ -5,14 +5,14 @@
 # License: GPL v.3 https://www.gnu.org/copyleft/gpl.html
 
 import sys
-from urllib import urlencode
-from urlparse import parse_qsl
+import urllib.request, urllib.parse, urllib.error
+from urllib.parse import urlencode
+from urllib.parse import parse_qsl
 import xbmcgui
 import xbmcplugin
 import xbmcaddon
 import xbmc
 import json
-import urllib
 import os
 import xbmcvfs
 import time
@@ -39,8 +39,8 @@ class Indexer:
         self.cache = simplecache.SimpleCache()
 
         self.addon = xbmcaddon.Addon()
-        self.addonRootPath = self.addon.getAddonInfo('path').decode('utf-8')
-        self.dataPath = xbmc.translatePath(xbmcaddon.Addon().getAddonInfo(('profile'))).decode('utf-8')
+        self.addonRootPath = self.addon.getAddonInfo('path')
+        self.dataPath = xbmc.translatePath(xbmcaddon.Addon().getAddonInfo(('profile')))
         
         #settings
         self.username=self.addon.getSetting('filelist.user')
@@ -242,7 +242,7 @@ class Indexer:
 
     def play_video(self, torrentId):
         torrentsById = self.cache.get(CACHE_LABEL_TORRENTS_BY_ID)
-        print("TorrentsById: "+str(torrentsById))
+        print(("TorrentsById: "+str(torrentsById)))
         torrent = torrentsById[int(torrentId)]
 
         saveDir = self.dataPath
@@ -251,7 +251,7 @@ class Indexer:
 
         torrentPath = self.FLTorrentProvider.downloadTorrent(torrent, saveDir)
 
-        torrentPathUrl = urllib.quote_plus(torrentPath)
+        torrentPathUrl = urllib.parse.quote_plus(torrentPath)
         
         if self.torrentAction == ACTION_SAVE_TO_PATH:
             dialog = xbmcgui.Dialog()
@@ -273,11 +273,11 @@ class Indexer:
         kb.doModal()
         if (kb.isConfirmed()):
             text  = kb.getText()
-            filtered_text = urllib.quote_plus(text)
+            filtered_text = urllib.parse.quote_plus(text)
             torrents = self.FLTorrentProvider.searchTorrents("name", filtered_text, categoryId)
             if len(torrents) > 0:
                 if type(torrents) is dict:
-                    if 'error' in torrents.keys():
+                    if 'error' in list(torrents.keys()):
                         dialog = xbmcgui.Dialog()
                         ok = dialog.ok('Error', torrents['error'])
                 else:
@@ -309,7 +309,7 @@ class Indexer:
         if params:
             if params['action'] == 'listing':
                 if 'startIndex' in params:
-                    print("Start index: "+params['startIndex'])
+                    print(("Start index: "+params['startIndex']))
                     self.list_torrents(params['categoryId'], params['startIndex'])
                 else:
                     self.list_torrents(params['categoryId'], None)

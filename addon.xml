@@ -4,7 +4,7 @@ version="1.0.5"
 name="FileList.ro Video Plugin "
 provider-name="Dark1">
 <requires>
-  <import addon="xbmc.python" version="2.25.0"/>
+  <import addon="xbmc.python" version="3.0.0"/>
   <import addon="script.module.simplecache" version="1.0.18" />
 </requires>
 <extension point="xbmc.python.pluginsource" library="main.py">

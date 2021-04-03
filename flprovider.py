@@ -1,5 +1,5 @@
-import urllib
-from urllib import FancyURLopener
+import urllib.request, urllib.parse, urllib.error
+from urllib.request import FancyURLopener
 import xbmc
 import json
 import xbmcvfs

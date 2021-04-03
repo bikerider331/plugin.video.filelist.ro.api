@@ -1,12 +1,12 @@
 import sys
-from urllib import urlencode
-from urlparse import parse_qsl
+from urllib.parse import urlencode
+from urllib.parse import parse_qsl
 import xbmcgui
 import xbmcplugin
 import xbmcaddon
 import xbmc
 import json
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import os
 import xbmcvfs
 import time
@@ -32,7 +32,7 @@ class MovieInfoProvider:
                 return cachedMovieInfo
 
             tmdb_url = 'https://api.themoviedb.org/3/find/%s?api_key=%s&language=en-US&external_source=imdb_id' % (imdbID, self.tmdbKey)
-            tmdb_response = urllib.urlopen(tmdb_url)
+            tmdb_response = urllib.request.urlopen(tmdb_url)
             tmdb_data = json.loads(tmdb_response.read())
             xbmc.log(str(tmdb_data))
             if not tmdb_data is None:
