@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon id="plugin.video.filelist.ro.api"
-version="1.0.6"
+version="1.0.7"
 name="FileList.ro Video Plugin "
 provider-name="Dark1">
 <requires>
