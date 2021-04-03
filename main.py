@@ -51,7 +51,7 @@ class Indexer:
         self.metaDataAvailable = False
         self.pageSize = 10
         if not self.tmdb_api_key:
-            self.tmdb_api_key = base64.urlsafe_b64decode('NjI4YTFhNDAxZThiZDg1ZDFlZTc2OTA4MWUwZjFmYzE=')
+            self.tmdb_api_key = '628a1a401e8bd85d1ee769081e0f1fc1'
         if self.tmdb_api_key:
             from movieinfo import MovieInfoProvider
             self.movieInfoProvider = MovieInfoProvider(self.tmdb_api_key)
