@@ -5,8 +5,7 @@
 # License: GPL v.3 https://www.gnu.org/copyleft/gpl.html
 
 import sys
-from urllib import urlencode
-from urlparse import parse_qsl
+from urllib.parse import urlencode, parse_qsl, quote_plus
 import xbmcgui
 import xbmcplugin
 import xbmcaddon
@@ -25,8 +24,8 @@ import datetime
 ACTION_WATCH_WITH_ELEMENTUM = "0"
 ACTION_SAVE_TO_PATH = "1"
 
-CACHE_LABEL_TORRENTS_BY_ID = "filelist.ro.api_cached_torrents_by_id"
-CACHE_LABEL_TORRENTS = "filelist.ro.api_cached_torrents"
+CACHE_LABEL_TORRENTS_BY_ID = "filelist.io.api_cached_torrents_by_id"
+CACHE_LABEL_TORRENTS = "filelist.io.api_cached_torrents"
 CACHE_EXPIRATION_HOURS = 1
 
 class Indexer:
@@ -39,8 +38,8 @@ class Indexer:
         self.cache = simplecache.SimpleCache()
 
         self.addon = xbmcaddon.Addon()
-        self.addonRootPath = self.addon.getAddonInfo('path').decode('utf-8')
-        self.dataPath = xbmc.translatePath(xbmcaddon.Addon().getAddonInfo(('profile'))).decode('utf-8')
+        self.addonRootPath = self.addon.getAddonInfo('path')
+        self.dataPath = xbmcvfs.translatePath(xbmcaddon.Addon().getAddonInfo(('profile')))
         
         #settings
         self.username=self.addon.getSetting('filelist.user')
@@ -48,14 +47,13 @@ class Indexer:
         self.watchDir=self.addon.getSetting('saveTorrentFolder')
         self.torrentAction=self.addon.getSetting('torrentAction')
         self.tmdb_api_key=self.addon.getSetting('tmdb_api_key')
-        self.metaDataAvailable = False
+        self.movieInfoProvider = None
         self.pageSize = 10
-        if not self.tmdb_api_key:
-            self.tmdb_api_key = base64.urlsafe_b64decode('NjI4YTFhNDAxZThiZDg1ZDFlZTc2OTA4MWUwZjFmYzE=')
+
         if self.tmdb_api_key:
             from movieinfo import MovieInfoProvider
             self.movieInfoProvider = MovieInfoProvider(self.tmdb_api_key)
-            self.metaDataAvailable = True
+
         self.FLTorrentProvider = flprovider.FLTorrentProvider(self.username, self.passkey)
         self.categories = categories.Categories(self.addonRootPath)
 
@@ -76,39 +74,48 @@ class Indexer:
         """
         if (self.username == '' or self.passkey == ''):
                 return xbmc.executebuiltin('Addon.OpenSettings(%s)' % xbmcaddon.Addon().getAddonInfo('id'))
+
         # Set plugin category. It is displayed in some skins as the name
         # of the current section.
-        xbmcplugin.setPluginCategory(self._handle, 'FilList.ro')
+        xbmcplugin.setPluginCategory(self._handle, 'FileList.io')
         xbmcplugin.setContent(self._handle, 'videos')
 
         list_item = xbmcgui.ListItem(label="Search")
+        
         # Create a URL for a plugin recursive call.
         # Example: plugin://plugin.video.example/?action=listing&category=Animals
         url = self.get_url(action='search')
+
         # is_folder = True means that this item opens a sub-list of lower level items.
         is_folder = True
+
         # Add our item to the Kodi virtual folder listing.
         xbmcplugin.addDirectoryItem(self._handle, url, list_item, is_folder)
 
         allCategories = self.categories.getCategories()
+
         # Iterate through categories
         for category in allCategories:
             if (self.showCategory(category)):
                 self.addCategoryItem(category, category['name'], 'listing')
+
         # Finish creating a virtual folder.
         xbmcplugin.endOfDirectory(self._handle)
 
     def addCategoryItem(self, category, labelValue, actionValue):
         # Create a list item with a text label and a thumbnail image.
         list_item = xbmcgui.ListItem(label=labelValue)
+
         # Set graphics (thumbnail, fanart, banner, poster, landscape etc.) for the list item.
         # Here we use the same image for all items for simplicity's sake.
         # In a real-life plugin you need to set each image accordingly.
-        categoryThumb = self.addonRootPath+"/resources/media/"+str(category['id'])+"-image.png"
-        categoryFanart = self.addonRootPath+"/resources/media/"+str(category['id'])+"-fanart.png"
+        categoryThumb = self.addonRootPath + "/resources/media/" + str(category['id']) + "-image.png"
+        categoryFanart = self.addonRootPath + "/resources/media/" + str(category['id']) + "-fanart.png"
         
         list_item.setArt({'thumb': categoryThumb,
-                        'icon': categoryThumb})
+                          'fanart': categoryFanart,
+                          'icon': categoryThumb})
+
         # Set additional info for the list item.
         # Here we use a category name for both properties for for simplicity's sake.
         # setInfo allows to set various information for an item.
@@ -121,8 +128,10 @@ class Indexer:
         # Create a URL for a plugin recursive call.
         # Example: plugin://plugin.video.example/?action=listing&category=Animals
         url = self.get_url(action=actionValue, categoryId=category['id'])
+
         # is_folder = True means that this item opens a sub-list of lower level items.
         is_folder = True
+        
         # Add our item to the Kodi virtual folder listing.
         xbmcplugin.addDirectoryItem(self._handle, url, list_item, is_folder)    
 
@@ -201,21 +210,22 @@ class Indexer:
 
             artData = {}
             artData['icon'] = categoryThumb
-            if self.metaDataAvailable:
-                if 'imdb' in torrent:
-                    xbmc.log("IMDB ID available: "+str(torrent['imdb']))
-                    metadata = self.movieInfoProvider.getMovieInfo(imdbID=torrent['imdb'])
-                    if metadata:
-                        if 'poster_path' in metadata:
-                            posterFullPath = self.movieInfoProvider.getPosterFullPath(metadata['poster_path'])
-                            if posterFullPath:
-                                xbmc.log("Found poster: "+str(posterFullPath))
-                                artData['poster'] = posterFullPath
-                        if 'backdrop_path' in metadata:
-                            fanartFullPath = self.movieInfoProvider.getBackdropFullPath(metadata['backdrop_path'])
-                            if fanartFullPath:
-                                xbmc.log("Found fanart: "+str(fanartFullPath))
-                                artData['fanart'] = fanartFullPath
+
+            if self.movieInfoProvider and 'imdb' in torrent:
+                xbmc.log("IMDB ID available: "+str(torrent['imdb']))
+                metadata = self.movieInfoProvider.getMovieInfo(imdbID=torrent['imdb'])
+                if metadata:
+                    if 'poster_path' in metadata:
+                        posterFullPath = self.movieInfoProvider.getPosterFullPath(metadata['poster_path'])
+                        if posterFullPath:
+                            xbmc.log("Found poster: "+str(posterFullPath))
+                            artData['poster'] = posterFullPath
+                    if 'backdrop_path' in metadata:
+                        fanartFullPath = self.movieInfoProvider.getBackdropFullPath(metadata['backdrop_path'])
+                        if fanartFullPath:
+                            xbmc.log("Found fanart: "+str(fanartFullPath))
+                            artData['fanart'] = fanartFullPath
+
             list_item.setArt(artData)
             
             #list_item.setArt({'thumb': video['thumb'], 'icon': video['thumb'], 'fanart': video['thumb']})
@@ -242,7 +252,7 @@ class Indexer:
 
     def play_video(self, torrentId):
         torrentsById = self.cache.get(CACHE_LABEL_TORRENTS_BY_ID)
-        print("TorrentsById: "+str(torrentsById))
+        print("TorrentsById: " + str(torrentsById))
         torrent = torrentsById[int(torrentId)]
 
         saveDir = self.dataPath
@@ -251,11 +261,11 @@ class Indexer:
 
         torrentPath = self.FLTorrentProvider.downloadTorrent(torrent, saveDir)
 
-        torrentPathUrl = urllib.quote_plus(torrentPath)
+        torrentPathUrl = quote_plus(torrentPath)
         
         if self.torrentAction == ACTION_SAVE_TO_PATH:
             dialog = xbmcgui.Dialog()
-            ok = dialog.ok('FileList.ro', 'Torrent saved.')
+            ok = dialog.ok('FileList.io', 'Torrent saved.')
 
         if self.torrentAction == ACTION_WATCH_WITH_ELEMENTUM:
 

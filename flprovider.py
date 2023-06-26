@@ -1,5 +1,5 @@
 import urllib
-from urllib import FancyURLopener
+from urllib.request import FancyURLopener
 import xbmc
 import json
 import xbmcvfs
@@ -14,16 +14,13 @@ class FLTorrentProvider:
         self.username = username
         self.passkey = passkey
 
-
     def getLatestTorrentsByCategoryID(self, categoryId):
         action="latest-torrents"
-        url = self.makeUrl(action)
 
-        url = url +"&category="+str(categoryId)
+        url = self.makeUrl(action)
+        url = url +"&category=" + str(categoryId)
 
         data = self.getData(url) 
-
-        
 
         return data
 
@@ -31,18 +28,19 @@ class FLTorrentProvider:
         action="search-torrents"
         
         url = self.makeUrl(action)
-        url = url + "&type="+searchType
-        url = url + "&query="+query
+        url = url + "&type=" + searchType
+        url = url + "&query=" + query
+
         if categoryId:
-            url = url + "&category="+categoryId
+            url = url + "&category=" + categoryId
 
         data = self.getData(url)
 
         return data    
 
     def makeUrl(self, action):
-        url = "https://filelist.io/api.php?username="+self.username+"&passkey="+self.passkey+"&action="+action
-        return url
+        return "https://filelist.io/api.php?username=" + self.username + \
+            "&passkey=" + self.passkey + "&action=" + action
 
     def getData(self, url):
         xbmc.log("getData using url: "+url)
@@ -53,17 +51,18 @@ class FLTorrentProvider:
             receivedData = response.read()
             data = json.loads(receivedData)
         except Exception as e:
-            xbmc.log("Error decoding json response from FL. Exception: "+str(e))
+            xbmc.log("Error decoding json response from FL. Exception: " + str(e))
+
         return data
 
     def downloadTorrent(self, torrent, saveDir):
-        torrentPath = os.path.join(saveDir, torrent['name']+".torrent")
-        xbmc.log("Torrent path: "+torrentPath)
+        torrentPath = os.path.join(saveDir, torrent['name'] + ".torrent")
+        xbmc.log("Torrent path: " + torrentPath)
         xbmcvfs.delete(torrentPath)
 
         url = torrent['download_link']
 
-        xbmc.log("Download link: "+url)
+        xbmc.log("Download link: " + url)
 
         agent = FireFoxAgent() 
 

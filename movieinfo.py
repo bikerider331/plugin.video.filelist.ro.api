@@ -1,6 +1,6 @@
 import sys
-from urllib import urlencode
-from urlparse import parse_qsl
+from urllib.parse import urlencode, parse_qsl
+from urllib.request import urlopen
 import xbmcgui
 import xbmcplugin
 import xbmcaddon
@@ -18,8 +18,10 @@ import datetime
 
 CACHE_LABEL_TMDB_DATA = "filelist.ro.api_cached_tmdb_"
 CACHE_EXPIRATION_HOURS = 72
+
+
 class MovieInfoProvider:
-    
+
     def __init__(self, tmdbKey):
         self.tmdbKey = tmdbKey
         self.cache = simplecache.SimpleCache()
@@ -32,7 +34,7 @@ class MovieInfoProvider:
                 return cachedMovieInfo
 
             tmdb_url = 'https://api.themoviedb.org/3/find/%s?api_key=%s&language=en-US&external_source=imdb_id' % (imdbID, self.tmdbKey)
-            tmdb_response = urllib.urlopen(tmdb_url)
+            tmdb_response = urlopen(tmdb_url)
             tmdb_data = json.loads(tmdb_response.read())
             xbmc.log(str(tmdb_data))
             if not tmdb_data is None:

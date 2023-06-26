@@ -1,6 +1,6 @@
-# Video plugin for Filelist.ro 
+# Video plugin for Filelist.io 
 
-This is a video plugin for the Filelist.ro site using the API provided.
+This is a video plugin for the Filelist.io site using the API provided.
 
 How it works:
 

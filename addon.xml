@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.video.filelist.ro.api"
+<addon id="plugin.video.filelist.io.api"
 version="1.0.5"
-name="FileList.ro Video Plugin "
+name="FileList.io Video Plugin "
 provider-name="Dark1">
 <requires>
-  <import addon="xbmc.python" version="2.25.0"/>
+  <import addon="xbmc.python" version="3.0.0"/>
   <import addon="script.module.simplecache" version="1.0.18" />
 </requires>
 <extension point="xbmc.python.pluginsource" library="main.py">
   <provides>video</provides>
 </extension>
 <extension point="xbmc.addon.metadata">
-  <summary lang="en">Filelist.ro Kodi Video Plugin</summary>
-  <description lang="en_GB">Video plugin for Filelist.ro using the API of the site</description>
+  <summary lang="en">FileList.io Kodi Video Plugin</summary>
+  <description lang="en_GB">Video plugin for Filelist.io using the API of the site</description>
   <disclaimer lang="en_GB">The usage of this plugin is at your own risk.</disclaimer>
   <assets>
     <icon>icon.png</icon>
     <fanart>fanart.jpg</fanart>
   </assets>
-  <news>Fixed requests not working</news>
+  <news>Let's make FileList great again</news>
   <language>en</language>
 	<platform>all</platform>
 </extension>
