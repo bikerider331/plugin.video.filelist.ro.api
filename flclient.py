@@ -1,3 +1,27 @@
+"""
+https://filelist.io/api.php?username=tavy14t&passkey=<PASS_KEY>&action=latest-torrents
+returns a list with items like this:
+{
+    "id": 838752,
+    "name": "El.caballo.blanco.1962.1080p.WEB-DL.DDP2.0.H-264",
+    "imdb": "tt0055818",
+    "freeleech": 0,
+    "doubleup": 0,
+    "upload_date": "2023-06-27 20:59:36",
+    "download_link": "https:\/\/filelist.io\/download.php?id=838752&passkey=cbd180bace0b391b6b8b42837889fb17",
+    "size": 6532622737,
+    "internal": 0,
+    "moderated": 1,
+    "category": "Filme HD",
+    "seeders": 15,
+    "leechers": 2,
+    "times_completed": 21,
+    "comments": 0,
+    "files": 1,
+    "small_description": "Comedy, Drama, Musical"
+}
+"""
+
 import urllib
 from urllib.request import FancyURLopener
 import xbmc
@@ -8,42 +32,41 @@ import os
 class FireFoxAgent(FancyURLopener):
     version = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11'
 
-class FLTorrentProvider:
+class FilelistClient:
     
     def __init__(self, username, passkey):
         self.username = username
         self.passkey = passkey
 
-    def getLatestTorrentsByCategoryID(self, categoryId):
+    def get_latest_torrents_by_category_id(self, categoryId):
         action="latest-torrents"
 
-        url = self.makeUrl(action)
-        url = url +"&category=" + str(categoryId)
+        url = self.make_url(action)
+        url = url + "&category=" + str(categoryId)
 
-        data = self.getData(url) 
+        data = self.get_data(url) 
 
         return data
 
-    def searchTorrents(self,searchType, query, categoryId):
+    def search_torrents(self,searchType, query, categoryId):
         action="search-torrents"
         
-        url = self.makeUrl(action)
+        url = self.make_url(action)
         url = url + "&type=" + searchType
         url = url + "&query=" + query
 
         if categoryId:
             url = url + "&category=" + categoryId
 
-        data = self.getData(url)
+        data = self.get_data(url)
 
         return data    
 
-    def makeUrl(self, action):
+    def make_url(self, action):
         return "https://filelist.io/api.php?username=" + self.username + \
             "&passkey=" + self.passkey + "&action=" + action
 
-    def getData(self, url):
-        xbmc.log("getData using url: "+url)
+    def get_data(self, url):
         data = []
         try:
             agent = FireFoxAgent() 
@@ -55,15 +78,13 @@ class FLTorrentProvider:
 
         return data
 
-    def downloadTorrent(self, torrent, saveDir):
+    def download_torrent(self, torrent, saveDir):
         torrentPath = os.path.join(saveDir, torrent['name'] + ".torrent")
         xbmc.log("Torrent path: " + torrentPath)
+        
         xbmcvfs.delete(torrentPath)
 
         url = torrent['download_link']
-
-        xbmc.log("Download link: " + url)
-
         agent = FireFoxAgent() 
 
         response = agent.open(url)
