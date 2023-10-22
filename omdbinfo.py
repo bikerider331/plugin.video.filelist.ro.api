@@ -93,8 +93,6 @@ class OMDBInfoProvider:
 
         # get release year (eg: 2017 in 05 May 2017). if not available an [''] is returned by findall
         # then we get the first element: ''
-        
-
         try:
             m['year'] = re.findall(r'\d{4}|$', metadata.get('Released', ''))[0]
         except:

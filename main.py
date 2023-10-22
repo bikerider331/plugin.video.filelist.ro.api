@@ -58,6 +58,7 @@ class Indexer:
 
         self.filelist_api = flclient.FilelistClient(self.username, self.passkey)
         self.categories = categories.Categories(self.addonRootPath)
+        xbmc.log("Indexer init successfully")
 
     def get_url(self, **kwargs):
         """
@@ -162,6 +163,8 @@ class Indexer:
         self.show_torrents(category_id, torrents, start_index)
         
     def cache_torrents(self, torrents, category_id):
+        xbmc.log("Caching %d torrents of %s" % (len(torrents), category_id))
+
         if not torrents:
             return
 
@@ -179,7 +182,7 @@ class Indexer:
                         torrents,
                         expiration=datetime.timedelta(hours=CACHE_EXPIRATION_HOURS))
 
-    def show_torrents(self, category_id, torrents, start_index, paged=True): 
+    def show_torrents(self, category_id, torrents, start_index, paged=True):
         self.cache_torrents(torrents, category_id)
 
         addNextPageItem = True
@@ -197,6 +200,8 @@ class Indexer:
 
         for index in range(start_index, end_index):
             torrent = torrents[index]
+
+            xbmc.log("Adding torrent to view: " + str(torrent))
             
             # Create a list item with a text label and a thumbnail image.
             list_item = xbmcgui.ListItem(label=torrent['name'])
@@ -242,13 +247,13 @@ class Indexer:
                         artData['poster'] = metadata['poster']
                         artData['fanart'] = metadata['poster']
 
-                        list_item.setLabel(metadata['title'])
-                        list_item.setLabel2(torrent['name'])
+                        list_item.setLabel(torrent['name'])
+                        list_item.setLabel2(metadata['title'])
                         
                         list_item.setInfo('video', {
                             'plotoutline': torrent['small_description'],
-                            'originaltitle': torrent['name'],
                             'imdbnumber': torrent['imdb'],
+                            'title': torrent['name'],
 
                             'year': metadata['year'],
                             'rating': metadata['rating'],
@@ -257,7 +262,7 @@ class Indexer:
                             'mpaa': metadata['mpaa'],
                             'plot': metadata['plot'],
                             'director': metadata['director'],
-                            'title': metadata['title'],
+                            'originaltitle': metadata['title'],
                             'cast': metadata['cast'],
                             'duration': metadata['duration'],
                             'tagline': metadata['tagline'],
@@ -273,7 +278,10 @@ class Indexer:
             # This is mandatory for playable items!
             list_item.setProperty('IsPlayable', 'true')
 
-            url = self.get_url(action='play', category_id=category_id, torrent=torrent['id'])
+            if category_id is not None:
+                url = self.get_url(action='play', category_id=category_id, torrent=torrent['id'])
+            else:
+                url = self.get_url(action='play', category_id=self.categories.get_category_by_name(torrent["category"])['id'], torrent=torrent['id'])
 
             # Add our item to the Kodi virtual folder listing.
             xbmcplugin.addDirectoryItem(self._handle, url, list_item, isFolder=False, totalItems=totalItems)
@@ -289,7 +297,12 @@ class Indexer:
 
     def play_video(self, category_id, torrent_id):
         torrentsById = self.cache.get('%s.%s' % (CACHE_LABEL_TORRENTS_BY_ID, category_id))
-        torrent = torrentsById[torrent_id]
+
+        try:
+            torrent = torrentsById[torrent_id]
+        except:
+            torrentsById = self.cache.get('%s.%s' % (CACHE_LABEL_TORRENTS_BY_ID, None))
+            torrent = torrentsById[torrent_id]
 
         torrent_path = self.filelist_api.download_torrent(torrent, self.dataPath)
         torrent_path_safe_str = quote_plus(torrent_path)
@@ -348,6 +361,8 @@ class Indexer:
         # {<parameter>: <value>} elements
         params = dict(parse_qsl(paramstring))
 
+        xbmc.log("Router command: " + str(params))
+
         # Check the parameters passed to the plugin
         if params:
 
@@ -362,7 +377,7 @@ class Indexer:
 
             elif params['action'] == 'play':
                 # Play a video from a provided URL.
-                self.play_video(int(params['category_id']), int(params['torrent']))
+                self.play_video(params['category_id'], int(params['torrent']))
 
             else:
                 # If the provided paramstring does not contain a supported action
