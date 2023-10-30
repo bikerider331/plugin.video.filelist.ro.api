@@ -8,7 +8,7 @@ returns a list with items like this:
     "freeleech": 0,
     "doubleup": 0,
     "upload_date": "2023-06-27 20:59:36",
-    "download_link": "https:\/\/filelist.io\/download.php?id=838752&passkey=cbd180bace0b391b6b8b42837889fb17",
+    "download_link": "https:\/\/filelist.io\/download.php?id=bla&passkey=blabla",
     "size": 6532622737,
     "internal": 0,
     "moderated": 1,
