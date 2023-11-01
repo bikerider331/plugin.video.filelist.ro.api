@@ -2,7 +2,7 @@ import json
 
 class Categories:
     def __init__(self, addonRootPath):
-        with open(addonRootPath+"/resources/categories.json") as json_file:
+        with open(addonRootPath + "/resources/categories.json") as json_file:
             self.categories = json.load(json_file)
             self.categoriesById = {}
             self.categoriesByName = {}
@@ -12,11 +12,11 @@ class Categories:
                 self.categoriesById[id] = c
                 self.categoriesByName[name] = c
 
-    def getCategoryById(self, id):
+    def get_category_by_id(self, id):
         return self.categoriesById[id]
 
-    def getCategoryByName(self, name):
+    def get_category_by_name(self, name):
         return self.categoriesByName[name]
 
-    def getCategories(self):
+    def get_categories(self):
         return self.categories    

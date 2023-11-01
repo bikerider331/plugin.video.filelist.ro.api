@@ -5,11 +5,8 @@
 	<setting id="filelist.passphrase" type="text" label="passphrase" default="" />
 
 	<setting label="Movie posters and info sources" type="lsep" />
-	<setting id="tmdb_api_key" type="text" label="TMDB API Key" default="" />
-
-	<setting label="Torrent actions" type="lsep"/>
-	<setting id="torrentAction" type="enum" values="Watch with Elementum|Save to folder" label="Select action for torrent" default="0"/>
-	<setting id="saveTorrentFolder" type="folder"  source="auto" option="writeable" label="Save torrents folder" default=""/>
+	<setting id="tmdb_api_key" type="text" label="themoviedb.org API Key" default="" />
+	<setting id="omdb_api_key" type="text" label="omdbapi.com API key" default="" />
 
 	<setting label="Categories to show" type="lsep"/>
 	<setting id="show_video" type="bool" label="Video" default="true" />
